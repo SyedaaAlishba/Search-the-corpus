@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mini Search Engine — Custom Hash Table + Trie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<header class="site-header">
+    <div class="brand">
+        <span class="brand-mark">⌁</span>
+        <span class="brand-name">Mini Search Engine</span>
+    </div>
+    <span class="brand-tag">custom hash table · trie · DFS — no external index</span>
+</header>
+
+<main class="hero">
+    <h1 class="hero-title">Search the corpus.</h1>
+    <p class="hero-sub">Every result below is served by a hand-rolled inverted index — a polynomial rolling hash with separate chaining, and a trie walked by DFS for autocomplete.</p>
+
+    <div class="search-wrap">
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input
+                type="text"
+                id="searchBox"
+                placeholder='Try: java AND python · web OR machine · "machine learning"'
+                autocomplete="off"
+                spellcheck="false"
+            />
+            <button id="searchButton">Search</button>
+            <ul id="suggestionBox" class="suggestion-box"></ul>
+        </div>
+
+        <div class="search-meta">
+            <span id="statusText" class="status-text">Loading documents and building index...</span>
+            <button id="traceToggle" class="trace-toggle">Show index trace</button>
+        </div>
+    </div>
+
+    <div id="tracePanel" class="trace-panel">
+        <div id="traceContent" class="trace-content">
+            <p class="trace-empty">Type a word to see its hash bucket and trie path.</p>
+        </div>
+    </div>
+</main>
+
+<section class="results-section">
+    <div id="resultBox" class="result-grid">
+        <!-- populated by main.js -->
+    </div>
+</section>
+
+<footer class="site-footer">
+    <span><span id="docCount">0</span> documents indexed</span>
+    <span class="dot">·</span>
+    <span>AND / OR / "phrase" search</span>
+    <span class="dot">·</span>
+    <span>Ranked by word frequency</span>
+</footer>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
