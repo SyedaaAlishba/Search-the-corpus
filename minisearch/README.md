@@ -1,60 +1,321 @@
-# Mini Search Engine — Web Port
+# 🔍 Mini Search Engine
 
-A browser port of the C++ Mini Search Engine (Qt) project. Same algorithms,
-same behavior — custom hash table with polynomial rolling hash and separate
-chaining, trie + DFS autocomplete, AND/OR/phrase search, word-frequency
-ranking — implemented in vanilla HTML/CSS/JS with no backend and no
-external search library.
+A **Data Structures & Algorithms** project that implements a document search engine completely from scratch using **C++**. The project demonstrates how modern search engines work internally by implementing custom data structures and search algorithms without relying on external search libraries.
 
-## Run it locally
+> **Algorithms & Data Structures Used:** Custom Hash Table • Inverted Index • Polynomial Rolling Hash • Separate Chaining • Trie • DFS • Frequency-Based Ranking
 
-Because the JS uses ES modules (`import`/`export`) and `fetch()` for the
-data files, you can't just double-click `index.html` — it needs to be served
-over HTTP (browsers block module imports and fetch on the `file://` scheme).
+---
 
-```bash
-cd minisearch
-python3 -m http.server 8000
-# then open http://localhost:8000
+## 📖 Overview
+
+This Mini Search Engine indexes a collection of text documents and allows users to perform fast and efficient searches.
+
+Instead of scanning every document for every search query, the engine first builds an **Inverted Index** using a custom **Hash Table**. This significantly reduces search time and demonstrates the practical use of Data Structures in Information Retrieval.
+
+The project also includes a **Trie** for real-time autocomplete suggestions and supports multiple search modes similar to modern search engines.
+
+---
+
+## ✨ Features
+
+- 📄 Load multiple text documents automatically
+- 🔍 Single keyword search
+- 🔗 AND Search
+- 🔀 OR Search
+- 💬 Phrase Search
+- ⚡ Fast lookup using an Inverted Index
+- 🌲 Trie-based Autocomplete
+- 🔎 DFS Traversal for Suggestions
+- 📊 Frequency-Based Ranking
+- 🖥️ GUI built using Qt
+
+---
+
+## 🛠️ Data Structures Used
+
+### 1. Custom Hash Table
+Stores the inverted index mapping each word to the documents in which it appears.
+
+**Purpose**
+- Fast word lookup
+- Document retrieval
+- Frequency counting
+
+---
+
+### 2. Trie
+
+Stores all unique words character by character.
+
+**Purpose**
+- Live autocomplete
+- Prefix searching
+- Fast word suggestions
+
+---
+
+### 3. Vector
+
+Used to store:
+
+- Documents
+- Search results
+- Word lists
+- Document frequencies
+
+---
+
+### 4. Linked List (Separate Chaining)
+
+Used inside the Hash Table to resolve collisions.
+
+---
+
+## 🧠 Algorithms Used
+
+### Polynomial Rolling Hash
+
+Converts every word into a bucket index.
+
+```cpp
+hash = (hash * 31 + c) % SIZE;
 ```
 
-Any static server works the same way (`npx serve`, VS Code Live Server, etc.).
+---
 
-## Deploy
+### Separate Chaining
 
-This is a pure static site — copy the whole `minisearch/` folder as-is to:
+Handles hash collisions by storing multiple words in the same bucket using linked lists.
 
-- **GitHub Pages** — push to a repo, enable Pages on the branch/folder.
-- **Netlify / Vercel** — drag-and-drop the folder, or connect the repo. No
-  build step, no framework, no environment variables needed.
+---
 
-## Adding your own documents
+### Tokenization
 
-Drop `.txt` files into `data/`, then add their filenames to
-`data/manifest.json`. That file plays the role the C++ `FileCrawler` played
-via `fs::directory_iterator` — since a static site has no filesystem to
-scan at runtime, the manifest is how it learns what to load.
+Converts raw document text into searchable words.
 
-## What's intentionally unchanged vs. the C++ version
+Steps:
 
-- `HashTable.js` — identical hash formula (`hash*31+c mod 10`) and separate
-  chaining via a linked structure per bucket.
-- `Trie.js` — identical 26-child trie and recursive DFS for suggestions.
-- `SearchEngine.js` — identical tokenizer, AND/OR/phrase search logic, and
-  frequency-based ranking.
+- Convert to lowercase
+- Remove punctuation
+- Split into individual words
 
-## What had to adapt (and why)
+---
 
-- `FileCrawler.js` reads `data/manifest.json` instead of walking the OS
-  filesystem — browsers have no API to list an arbitrary folder.
-- `DocumentLoader.js` uses `fetch()` instead of `ifstream`.
+### Depth First Search (DFS)
 
-## Bonus (non-core) additions
+Used inside the Trie to generate autocomplete suggestions.
 
-- **Index Trace panel** — a toggle that shows, live, which hash bucket a word
-  lands in, the chain it walks through, and the trie path DFS would explore.
-  Purely a read-only view into the existing data structures — it doesn't
-  change how search or ranking work, it just makes the DSA visible.
-- **Snippet extraction with highlighting** — the UI spec asked for preview
-  snippets with matched content; this is layered on top of ranking, not a
-  change to it.
+---
+
+### Frequency-Based Ranking
+
+Search results are ranked according to how frequently the query words appear inside each document.
+
+Higher frequency = Higher score.
+
+---
+
+## 🔍 Search Types
+
+### Single Word Search
+
+Example
+
+```
+algorithm
+```
+
+Returns every document containing the word.
+
+---
+
+### AND Search
+
+Example
+
+```
+data structures
+```
+
+Returns only documents containing **both** words.
+
+---
+
+### OR Search
+
+Example
+
+```
+java OR python
+```
+
+Returns documents containing either word.
+
+---
+
+### Phrase Search
+
+Example
+
+```
+"machine learning"
+```
+
+Returns documents containing the exact phrase.
+
+---
+
+## 📁 Project Structure
+
+```
+MiniSearchEngine/
+│
+├── data/
+│   ├── doc1.txt
+│   ├── doc2.txt
+│   └── ...
+│
+├── DocumentLoader
+├── FileCrawler
+├── SearchEngine
+├── HashTable
+├── Trie
+├── MainWindow
+└── main.cpp
+```
+
+---
+
+## 🔄 Project Workflow
+
+```
+Documents
+      │
+      ▼
+Document Loader
+      │
+      ▼
+Tokenizer
+      │
+      ▼
+Hash Table (Inverted Index)
+      │
+      ├─────────────► Trie
+      │                 │
+      │                 ▼
+      │            Autocomplete
+      ▼
+Search Query
+      │
+      ▼
+AND / OR / Phrase Search
+      │
+      ▼
+Frequency Ranking
+      │
+      ▼
+Search Results
+```
+
+---
+
+## ⚙️ How It Works
+
+### Step 1
+
+The File Crawler finds all text documents inside the data folder.
+
+↓
+
+### Step 2
+
+The Document Loader reads every document.
+
+↓
+
+### Step 3
+
+The Tokenizer cleans the text by:
+
+- Removing punctuation
+- Converting to lowercase
+- Splitting into words
+
+↓
+
+### Step 4
+
+Each word is inserted into the Hash Table to build an Inverted Index.
+
+↓
+
+### Step 5
+
+Unique words are inserted into the Trie for autocomplete.
+
+↓
+
+### Step 6
+
+When a user searches:
+
+- AND Search
+- OR Search
+- Phrase Search
+
+the engine retrieves matching documents.
+
+↓
+
+### Step 7
+
+Results are ranked according to word frequency.
+
+↓
+
+### Step 8
+
+The ranked results are displayed to the user.
+
+---
+
+## 🚀 Technologies Used
+
+- C++
+- Qt Framework
+- STL
+- Object-Oriented Programming
+- Data Structures & Algorithms
+
+---
+
+## 📚 Concepts Demonstrated
+
+- Object-Oriented Programming
+- File Handling
+- String Processing
+- Custom Hash Table
+- Hashing
+- Collision Resolution
+- Inverted Index
+- Trie
+- Depth First Search (DFS)
+- Searching Algorithms
+- Ranking Algorithms
+
+---
+
+## 🎯 Learning Outcomes
+
+This project demonstrates how search engines organize and retrieve information efficiently using fundamental Data Structures and Algorithms.
+
+Instead of relying on external libraries, every core component—including indexing, searching, autocomplete, and ranking—was implemented from scratch to strengthen understanding of real-world DSA applications.
+
+---
+
+## 👩‍💻 Author
+
+**Alishba**
+
+BS Computer Science  
+University of Karachi
